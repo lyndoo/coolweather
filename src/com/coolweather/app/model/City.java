@@ -1,40 +1,19 @@
 package com.coolweather.app.model;
 
 public class City {
-	private int id;
-	private String cityName;
-	private String cityCode;
-	private int provinceId;
-
-	public int getId() {
-		return id;
+	private String cityNameEN;
+	private String cityNameCN;
+	public String getCityNameEN() {
+		return cityNameEN;
+	}
+	public void setCityNameEN(String cityNameEN) {
+		this.cityNameEN = cityNameEN;
+	}
+	public String getCityNameCN() {
+		return cityNameCN;
+	}
+	public void setCityNameCN(String cityNameCN) {
+		this.cityNameCN = cityNameCN;
 	}
 
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public String getCityName() {
-		return cityName;
-	}
-
-	public void setCityName(String cityName) {
-		this.cityName = cityName;
-	}
-
-	public String getCityCode() {
-		return cityCode;
-	}
-
-	public void setCityCode(String cityCode) {
-		this.cityCode = cityCode;
-	}
-
-	public int getProvinceId() {
-		return provinceId;
-	}
-
-	public void setProvinceId(int provinceId) {
-		this.provinceId = provinceId;
-	}
 }

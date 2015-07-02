@@ -46,7 +46,7 @@ public class CoolWeatherOpenHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		// TODO 自动生成的方法存根
-		
+		init();
 		//db.execSQL(CREATE_CITY);
 		//db.execSQL(CREATE_COUNTY);
 		//db.execSQL(CREATE_PROVINCE);
@@ -58,6 +58,8 @@ public class CoolWeatherOpenHelper extends SQLiteOpenHelper {
 
 	}
 
+
+	
 	public void createDatabse() throws IOException{
 		init();
 	}

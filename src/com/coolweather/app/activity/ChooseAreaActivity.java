@@ -67,12 +67,12 @@ public class ChooseAreaActivity extends Activity {
 	}
 
 	private void init() {
+		coolWeatherDB = CoolWeatherDB.getInstance(this);
 		titleText = (TextView) findViewById(R.id.title_text);
 		listView = (ListView) findViewById(R.id.list_view);
 		adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, dataList);
 		listView.setAdapter(adapter);
-		coolWeatherDB = CoolWeatherDB.getInstance(this);
 		listView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,

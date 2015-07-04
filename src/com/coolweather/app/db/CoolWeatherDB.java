@@ -11,6 +11,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 public class CoolWeatherDB {
 	/**
@@ -33,6 +34,7 @@ public class CoolWeatherDB {
 		CoolWeatherOpenHelper dbHelper = new CoolWeatherOpenHelper(context,
 				DB_NAME, null, VERSION);
 		db = dbHelper.getWritableDatabase();
+		//db = new DataBaseManager(context).openDatabase();
 	}
 
 	/**
@@ -87,7 +89,7 @@ public class CoolWeatherDB {
 	public List<Province> loadProvinces() {
 		List<Province> list = new ArrayList<Province>();
 		
-		Cursor cursor = 
+		Cursor cursor =
 				db.query("area", 
 						new String[]{"provcn,proven"}, null, null, "provcn,proven", null, "id");
 		if (cursor.moveToFirst()) {
@@ -112,8 +114,8 @@ public class CoolWeatherDB {
 		if (cursor.moveToFirst()) {
 			do {
 				City city = new City();
-				city.setCityNameCN(cursor.getColumnName(cursor.getColumnIndex("districtcn")));
-				city.setCityNameEN(cursor.getColumnName(cursor.getColumnIndex("districten")));
+				city.setCityNameCN(cursor.getString(cursor.getColumnIndex("districtcn")));
+				city.setCityNameEN(cursor.getString(cursor.getColumnIndex("districten")));
 				citys.add(city);
 			} while (cursor.moveToNext());
 		}
@@ -127,7 +129,7 @@ public class CoolWeatherDB {
 	public List<County> loadCounties(String cityNameEN) {
 		List<County> list = new ArrayList<County>();
 		Cursor cursor = db.query("area", 
-				new String[]{"id","nameen","namecn","districtEN","districtEN","provEN","provCN"}, 
+				new String[]{"id","nameen","namecn","districten","districtcn","proven","provcn"}, 
 				"districten = ?",new String[] { cityNameEN }, null, null, "id");
 		
 		if (cursor.moveToFirst()) {
@@ -135,17 +137,17 @@ public class CoolWeatherDB {
 				County county = new County();
 				county.setId(cursor.getInt(cursor.getColumnIndex("id")));
 				county.setCountyNameCN(cursor.getString(cursor
-						.getColumnIndex("NameCN")));
+						.getColumnIndex("namecn")));
 				county.setCountyNameEN(cursor.getString(cursor
-						.getColumnIndex("NameEN")));
+						.getColumnIndex("nameen")));
 				county.setDistrictEN(cursor.getString(cursor
-						.getColumnIndex("districtEN")));
+						.getColumnIndex("districten")));
 				county.setDistrictCN(cursor.getString(cursor
-						.getColumnIndex("districtCN")));
+						.getColumnIndex("districtcn")));
 				county.setProvCN(cursor.getString(cursor
-						.getColumnIndex("provCN")));
+						.getColumnIndex("provcn")));
 				county.setProvEN(cursor.getString(cursor
-						.getColumnIndex("provEN")));
+						.getColumnIndex("proven")));
 				list.add(county);
 			} while (cursor.moveToNext());
 		}

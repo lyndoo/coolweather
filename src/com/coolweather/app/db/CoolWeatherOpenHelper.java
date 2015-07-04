@@ -1,6 +1,7 @@
 package com.coolweather.app.db;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,29 +13,20 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
+import android.util.Log;
 
 public class CoolWeatherOpenHelper extends SQLiteOpenHelper {
 
 	private final Context myContext;
 	private SQLiteDatabase myDataBase;
+	
 	/**
 	 * Province表建表语句
 	 */
-	public static final String CREATE_PROVINCE = "create table Province ("
-			+ "id integer primary key autoincrement, " + "province_name text, "
-			+ "province_code text)";
-	/**
-	 * City表建表语句
-	 */
-	public static final String CREATE_CITY = "create table City ("
-			+ "id integer primary key autoincrement, " + "city_name text, "
-			+ "city_code text, " + "province_id integer)";
-	/**
-	 * County表建表语句
-	 */
-	public static final String CREATE_COUNTY = "create table County ("
-			+ "id integer primary key autoincrement, " + "county_name text, "
-			+ "county_code text, " + "city_id integer)";
+	public static final String CREATE_AREA = "create table area ("
+			+ "id integer primary key, " + "NameEN text, " + "NameCN text,"
+			+ "DistrictEN text," + "DistrictCN text," + "ProvEN text,"
+			+ "ProvCN text," + "NationEN text," + "NationCN text)";
 
 	public CoolWeatherOpenHelper(Context context, String name,
 			CursorFactory factory, int version) {
@@ -46,10 +38,21 @@ public class CoolWeatherOpenHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		// TODO 自动生成的方法存根
-		init();
-		//db.execSQL(CREATE_CITY);
-		//db.execSQL(CREATE_COUNTY);
-		//db.execSQL(CREATE_PROVINCE);
+		// db.execSQL(CREATE_AREA);
+		// db.execSQL(CREATE_COUNTY);
+		// db.execSQL(CREATE_PROVINCE);
+	}
+
+	@Override
+	public synchronized SQLiteDatabase getWritableDatabase() {
+		// TODO Auto-generated method stub
+		return openDatabase();
+	}
+
+	@Override
+	public synchronized SQLiteDatabase getReadableDatabase() {
+		// TODO Auto-generated method stub
+		return openDatabase();
 	}
 
 	@Override
@@ -58,53 +61,46 @@ public class CoolWeatherOpenHelper extends SQLiteOpenHelper {
 
 	}
 
-
-	
-	public void createDatabse() throws IOException{
-		init();
-	}
-	
 	@Override
 	public synchronized void close() {
 		// TODO Auto-generated method stub
-		if(myDataBase!=null)
+		if (myDataBase != null)
 			myDataBase.close();
 		super.close();
 	}
-	
-	/**
-	方法说明
-	* @creator   leixun
-	* @create-time 2012-7-13 下午1:28:13  
-	* @Title: init
-	* @Description: TODO(初始化数据库，并打开)    
-	* @return void
-	* @throws
-	*/
-	public void init(){
-		try{
-			String databasePath = Environment.getExternalStorageDirectory().getAbsolutePath();
-			String databaseFilename = databasePath + "/" + "coolweather";
-			File dir = new File(databasePath);
-			if(!dir.exists()){  //数据库文件目录不存在
-				dir.mkdir(); 	//创建目录  
-			}
-			if(!(new File(databaseFilename)).exists()){ //数据库文件不存在，则复制自带数据库
-				System.out.println("jianku");
-				InputStream is = myContext.getResources().openRawResource(R.raw.coolweather);
-				FileOutputStream fos = new FileOutputStream(databaseFilename);
-				byte[] buffer = new byte[1024];
+
+	private SQLiteDatabase openDatabase() {
+		int BUFFER_SIZE = 400000;
+		String DB_NAME = "coolweather.db"; // 保存的数据库文件名
+		String PACKAGE_NAME = "com.coolweather.app";// 包名
+		String DB_PATH = "/data"
+				+ Environment.getDataDirectory().getAbsolutePath() + "/"
+				+ PACKAGE_NAME; // 在手机里存放数据库的位置
+
+		String dbfile = DB_PATH + "/" + DB_NAME;
+		try {
+			if (!(new File(dbfile).exists())) { // 判断数据库文件是否存在，若不存在则执行导入，否则直接打开数据库
+				InputStream is = this.myContext.getResources().openRawResource(
+						R.raw.coolweather); // 欲导入的数据库
+				FileOutputStream fos = new FileOutputStream(dbfile);
+				byte[] buffer = new byte[BUFFER_SIZE];
 				int count = 0;
-				while((count = is.read(buffer))>0){
-					fos.write(buffer,0,count);
+				while ((count = is.read(buffer)) > 0) {
+					fos.write(buffer, 0, count);
 				}
-				fos.flush();
 				fos.close();
 				is.close();
 			}
-			this.myDataBase = SQLiteDatabase.openOrCreateDatabase(databaseFilename, null);//打开数据库文件
-		}catch(Exception e){
+			SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(dbfile,
+					null);
+			return db;
+		} catch (FileNotFoundException e) {
+			Log.e("Database", "File not found");
+			e.printStackTrace();
+		} catch (IOException e) {
+			Log.e("Database", "IO exception");
 			e.printStackTrace();
 		}
+		return null;
 	}
 }

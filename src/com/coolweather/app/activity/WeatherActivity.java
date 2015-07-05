@@ -1,0 +1,142 @@
+package com.coolweather.app.activity;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import com.coolweather.app.R;
+import com.coolweather.app.util.HttpCallbackListener;
+import com.coolweather.app.util.HttpUtil;
+import com.coolweather.app.util.Util;
+
+import android.app.Activity;
+import android.app.Application;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.text.format.DateFormat;
+import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+public class WeatherActivity extends Activity {
+	private LinearLayout weatherInfoLayout;
+	/**
+	 * 用于显示城市名
+	 */
+	private TextView cityNameText;
+	/**
+	 * 用于显示发布时间
+	 */
+	private TextView publishText;
+	/**
+	 * 用于显示天气描述信息
+	 */
+	private TextView weatherDespText;
+	/**
+	 * 用于显示气温1
+	 */
+	private TextView temp1Text;
+	/**
+	 * 用于显示气温2
+	 */
+	private TextView temp2Text;
+	/**
+	 * 用于显示当前日期
+	 */
+	private TextView currentDateText;
+	/**
+	 * 切换城市按钮
+	 */
+	private Button switchCity;
+	/**
+	 * 更新天气按钮
+	 */
+	private Button refreshWeather;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO 自动生成的方法存根
+		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		setContentView(R.layout.weather_layout);
+		test();
+
+	}
+
+	void init(){
+		// 初始化各控件
+		weatherInfoLayout = (LinearLayout) findViewById(R.id.weather_info_layout);
+				cityNameText = (TextView) findViewById(R.id.city_name);
+				publishText = (TextView) findViewById(R.id.publish_text);
+				weatherDespText = (TextView) findViewById(R.id.weather_desp);
+				temp1Text = (TextView) findViewById(R.id.temp1);
+				temp2Text = (TextView) findViewById(R.id.temp2);
+				currentDateText = (TextView) findViewById(R.id.current_date);
+				//switchCity = (Button) findViewById(R.id.switch_city);
+				//refreshWeather = (Button) findViewById(R.id.refresh_weather);
+				String countyCode = getIntent().getStringExtra("areaID");
+				String countyNameCN = getIntent().getStringExtra("areaNameCN");
+				if (!TextUtils.isEmpty(countyCode)) {
+					// 有县级代号时就去查询天气
+					publishText.setText("同步中...");
+					weatherInfoLayout.setVisibility(View.INVISIBLE);
+					cityNameText.setVisibility(View.INVISIBLE);
+					queryWeatherCode(countyCode);
+					} else {
+					// 没有县级代号时就直接显示本地天气
+						showWeather();
+					}
+					//switchCity.setOnClickListener(this);
+					//refreshWeather.setOnClickListener(this);
+	}
+
+	private void queryWeatherCode(String countyCode) {
+		// TODO 自动生成的方法存根
+		
+	}
+
+	private void showWeather() {
+		// TODO 自动生成的方法存根
+		
+	}
+
+	private void test() {
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmm");
+			String date = sdf.format(new Date());
+			// 需要加密的数据
+			String appID = this.getString(R.string.appID);
+			String data = "http://open.weather.com.cn/data/?areaid=101010200&type=forecast_v&date="
+					+ date + "&appid=" + appID;
+			String key = Util.standardURLEncoder(data,
+					this.getString(R.string.Private_Key));
+
+			String url = "http://open.weather.com.cn/data/?areaid=101010200&type=forecast_v&date="
+					+ date + "&appid=" + appID.substring(0, 6);
+
+			Log.e("return response", key);
+			Log.e("return response", url + "&key=" + key);
+
+			HttpUtil.sendHttpRequest(url + "&key=" + key,
+					new HttpCallbackListener() {
+						@Override
+						public void onFinish(String response) {
+							// TODO 自动生成的方法存根
+							Log.e("return response", response);
+							Util.handleWeatherRespose(getApplicationContext(),
+									response);
+						}
+
+						@Override
+						public void onError(Exception e) {
+							// TODO 自动生成的方法存根
+
+						}
+					});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}

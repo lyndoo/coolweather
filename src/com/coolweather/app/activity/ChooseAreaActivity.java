@@ -11,6 +11,8 @@ import com.coolweather.app.model.Province;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -83,6 +85,12 @@ public class ChooseAreaActivity extends Activity {
 				} else if (currentLevel == LEVEL_CITY) {
 					selectedCity = cityList.get(index);
 					queryCounties();
+				}else  if (currentLevel == LEVEL_COUNTY) {
+					Intent intent = new Intent(ChooseAreaActivity.this, WeatherActivity.class);
+					County county = countyList.get(index);
+					intent.putExtra("areaID", county.getId());
+					intent.putExtra("areaNameCN", county.getCountyNameCN());
+					startActivity(intent);
 				}
 			}
 		});

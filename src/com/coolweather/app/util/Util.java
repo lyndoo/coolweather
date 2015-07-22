@@ -14,6 +14,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.coolweather.app.R;
+
 import android.R.integer;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -160,6 +162,24 @@ public class Util {
 
 	}
 	
+	public static String GenerateURL(String CountyCode) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmm");
+		String date = sdf.format(new Date());
+		// 需要加密的数据
+		
+		String appID = "2c1c14deaa312a7b";
+		String data = "http://open.weather.com.cn/data/?areaid=" + CountyCode
+				+ "&type=forecast_v&date=" + date + "&appid=" + appID;
+		String key = Util.standardURLEncoder(data,
+				"9d60e7_SmartWeatherAPI_6d717b5");
+
+		String url = "http://open.weather.com.cn/data/?areaid=" + CountyCode
+				+ "&type=forecast_v&date=" + date + "&appid="
+				+ appID.substring(0, 6);
+		String tempString = url + "&key=" + key;
+		return tempString;
+	}
+
 	public static String getDate(Date date)
 	{
 		SimpleDateFormat sdf = new SimpleDateFormat("hh:mm",Locale.CHINA);

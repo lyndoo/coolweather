@@ -7,6 +7,7 @@ import com.coolweather.app.R;
 import com.coolweather.app.util.HttpCallbackListener;
 import com.coolweather.app.util.HttpUtil;
 import com.coolweather.app.util.Util;
+import com.coolweather.service.AutoUpdateService;
 
 import android.app.Activity;
 import android.app.Application;
@@ -103,12 +104,11 @@ public class WeatherActivity extends Activity implements OnClickListener {
 	private void queryWeatherCode(String countyCode) {
 		// TODO 自动生成的方法存根
 		try {
-			HttpUtil.sendHttpRequest(GenerateURL(countyCode),
+			HttpUtil.sendHttpRequest(Util.GenerateURL(countyCode),
 					new HttpCallbackListener() {
 						@Override
 						public void onFinish(String response) {
 							// TODO 自动生成的方法存根
-							Log.e("return response", response);
 							Util.handleWeatherRespose(WeatherActivity.this,
 									response);
 							runOnUiThread(new Runnable() {
@@ -150,24 +150,11 @@ public class WeatherActivity extends Activity implements OnClickListener {
 
 		weatherInfoLayout.setVisibility(View.VISIBLE);
 		cityNameText.setVisibility(View.VISIBLE);
+		
+		Intent intent = new Intent(this,AutoUpdateService.class);
+		startService(intent);
 	}
 
-	public String GenerateURL(String CountyCode) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmm");
-		String date = sdf.format(new Date());
-		// 需要加密的数据
-		String appID = this.getString(R.string.appID);
-		String data = "http://open.weather.com.cn/data/?areaid=" + CountyCode
-				+ "&type=forecast_v&date=" + date + "&appid=" + appID;
-		String key = Util.standardURLEncoder(data,
-				this.getString(R.string.Private_Key));
-
-		String url = "http://open.weather.com.cn/data/?areaid=" + CountyCode
-				+ "&type=forecast_v&date=" + date + "&appid="
-				+ appID.substring(0, 6);
-		String tempString = url + "&key=" + key;
-		return tempString;
-	}
 
 	@Override
 	public void onClick(View v) {
